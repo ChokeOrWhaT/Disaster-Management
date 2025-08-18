@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign Up | Disaster Management</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background-color: #E6F0FA;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .site-title {
+      text-align: center;
+      color: #1F4E79;
+      font-size: 38px;
+      font-weight: bold;
+      margin-bottom: 2px;
+    }
+
+
+    .signup-card {
+      background: #f8fbff;
+      padding: 2.5rem 2rem;
+      width: 500px;
+
+      border-radius: 20px;
+      box-shadow: 0 20px 45px rgba(0, 0, 0, 0.15);
+      /* Soft elegant shadow */
+      animation: slideFadeIn 1s ease forwards;
+      opacity: 0;
+      transform: translateY(50px);
+    }
+
+
+    @keyframes slideFadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .container {
+      display: flex;
+      justify-content: flex-end;
+      /* Push card to the right */
+      align-items: center;
+      height: 100vh;
+      padding-right: 100px;
+      /* Adjust spacing from right side */
+    }
+
+    .signup-card h2 {
+      text-align: center;
+      color: #1F4E79;
+      margin-bottom: 60px;
+    }
+
+    .input-box {
+      position: relative;
+      margin-bottom: 35px;
+    }
+
+    .input-box input {
+      width: 100%;
+      padding: 16px 40px 12px 16px;
+      /* Increased right padding for image */
+      border: 2px solid #d3e5f6;
+      border-radius: 10px;
+      outline: none;
+      transition: all 0.3s ease;
+      background-color: #f8fbff;
+    }
+
+    .input-box input:focus {
+      border-color: #1F4E79;
+      background-color: #fff;
+    }
+
+    .input-box label {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      transition: top 0.3s ease, font-size 0.3s ease, color 0.3s ease;
+
+      color: #888;
+      background-color: #f8fbff;
+      padding: 0 4px;
+    }
+
+    .input-box input:focus+label,
+    .input-box input:not(:placeholder-shown)+label {
+      top: -10px;
+      left: 5px;
+      font-size: 12px;
+      background-color: #f8fbff;
+      color: #1F4E79;
+    }
+
+    .input-box input:focus {
+      box-shadow: 0 0 0 4px rgba(31, 78, 121, 0.1);
+    }
+
+
+    .right-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+      opacity: 0.85;
+    }
+
+    .user-icon {
+      width: 19px;
+      height: 20px;
+    }
+
+    .email-icon {
+      width: 24px;
+      height: 18px;
+    }
+
+    .password-icon {
+      width: 21px;
+      height: 25px;
+    }
+
+
+
+    .signup-btn {
+      width: 100%;
+      padding: 12px;
+      margin-top: 40px;
+      background-color: #1F4E79;
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: 0.3s ease;
+    }
+
+    .signup-btn:hover {
+      background-color: #163d5d;
+    }
+
+    .login-text {
+      text-align: center;
+      margin-top: 1rem;
+      font-size: 14px;
+      color: #333;
+    }
+
+    .login-text a {
+      color: #1F4E79;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .login-text a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+<body>
+
+
+
+
+  <div class="signup-card">
+
+    <div class="wrapper">
+      <h1 class="site-title">DisasterX</h1>
+
+      <h2> Sign Up</h2>
+
+      <div class="input-box">
+        <input type="text" id="name" required placeholder=" " />
+        <label for="name">Full Name</label>
+        <img src="assets/imgs/user_icon.png" alt="User Icon" class="right-icon user-icon" />
+      </div>
+
+      <div class="input-box">
+        <input type="email" id="email" required placeholder=" " />
+        <label for="email">Email</label>
+        <img src="assets/imgs/email_icon.png" alt="Email Icon" class="right-icon email-icon" />
+      </div>
+
+      <div class="input-box">
+        <input type="password" id="password" required placeholder=" " />
+        <label for="password">Password</label>
+        <img src="assets/imgs/password_icon.png" alt="Password Icon" class="right-icon password-icon" />
+      </div>
+
+      <button class="signup-btn">Create Account</button>
+
+      <div class="login-text">
+        Already have an account? <a href="#">Log In</a>
+      </div>
+    </div>
+  </div>
+
+</body>
+
+</html>
