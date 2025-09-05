@@ -17,7 +17,7 @@
     .popup-overlay { top:0; left:0; width:100%; height:100%; }
   </style>
 </head>
-<body>
+<body class="flood-page">
 
   <!-- ===== SIDEBAR (unchanged) ===== -->
   <div class="sidebar" id="sidebar">
@@ -63,31 +63,63 @@
     </div>
   </nav>
 
-  <!-- ===== HERO ===== -->
-  <header class="flood-hero d-flex align-items-center">
-    <div class="container">
-      <div class="row justify-content-center text-center">
-        <div class="col-lg-10">
-          <div class="hero-badge reveal">
-            <i class="bi bi-tsunami me-2"></i> Flood Risk Intelligence
+
+<!-- ===== FLOOD HERO ===== -->
+<section class="flood-hero position-relative overflow-hidden">
+  <div class="flood-hero-bg" aria-hidden="true"></div>
+  <div class="container position-relative">
+    <div class="row align-items-center">
+      <!-- Copy/CTA -->
+      <div class="col-lg-7">
+        <div class="flood-hero-copy reveal">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <i class="bi bi-tsunami fs-3 text-primary"></i>
+            <span class="flood-chip">Flood Prediction (Experimental)</span>
           </div>
-          <h1 class="display-5 fw-bold text-white mb-3 reveal">Flood Prediction & Early Readiness</h1>
-          <p class="lead text-white-50 mb-4 reveal">
-            Near-real-time risk awareness powered by data fusion: hydrology, terrain, land cover, weather snapshots, and historical patterns.
+          <h1 class="flood-hero-title mb-3">
+            Understand flood risks with<br>
+            <span class="brand-accent">Disaster</span>X modeling
+          </h1>
+          <p class="flood-hero-sub mb-4">
+            Assess potential flood impact using rainfall data, watershed history, and predictive hydrology.<br/>
+            Designed for emergency teams, planners, and local communities.
           </p>
-          <div class="d-flex gap-3 justify-content-center reveal">
-            <a href="#flood-predictor" class="btn custom-btn btn-lg px-4">
-              <i class="bi bi-lightning-charge"></i> Start Risk Check
-            </a>
-            <a href="#how-it-works" class="btn custom-btn-outline btn-lg px-4">
-              <i class="bi bi-magic"></i> How it Works
-            </a>
+          <div class="d-flex flex-wrap gap-3">
+            <a href="#flood-predictor" class="btn flood-cta">Start Prediction</a>
+            <a href="#how-it-works" class="btn flood-ghost">How it works</a>
           </div>
         </div>
       </div>
+      <!-- Stats -->
+      <div class="col-lg-5 mt-5 mt-lg-0">
+        <div class="flood-stats reveal">
+          <div class="flood-stat">
+            <i class="bi bi-droplet-half"></i>
+            <div>
+              <div class="flood-stat-label">Rainfall past 24h</div>
+              <div class="flood-stat-value" data-target="320">0</div>
+            </div>
+          </div>
+          <div class="flood-stat">
+            <i class="bi bi-geo-alt"></i>
+            <div>
+              <div class="flood-stat-label">Alerts in your region</div>
+              <div class="flood-stat-value" data-target="5">0</div>
+            </div>
+          </div>
+          <div class="flood-stat">
+            <i class="bi bi-graph-up"></i>
+            <div>
+              <div class="flood-stat-label">Forecast updates (hrs)</div>
+              <div class="flood-stat-value" data-target="6">0</div>
+            </div>
+          </div>
+          <small class="text-muted">* Demo numbers for UI preview</small>
+        </div>
+      </div>
     </div>
-    <div class="flood-hero-overlay"></div>
-  </header>
+  </div>
+</section>
 
   <!-- ===== HOW IT WORKS ===== -->
   <section class="section-pad" id="how-it-works">

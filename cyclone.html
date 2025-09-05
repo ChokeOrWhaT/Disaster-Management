@@ -57,59 +57,65 @@
     </div>
   </nav>
 
-  <!-- HERO -->
-  <header class="cyclone-hero position-relative overflow-hidden">
-    <div class="cyclone-hero-bg" aria-hidden="true"></div>
+<!-- ===== CYCLONE HERO ===== -->
+<section class="cyclone-hero position-relative overflow-hidden">
+  <div aria-hidden="true"></div>
 
-    <div class="container position-relative z-2">
-      <div class="row align-items-center">
-        <div class="col-lg-7">
-          <div class="cyclone-hero-copy reveal">
-            <div class="d-inline-flex align-items-center gap-2 hero-tag mb-3">
-              <i class="bi bi-wind fs-4"></i>
-              <span>Real-time Cyclone Forecasting</span>
-            </div>
-            <h1 class="display-5 fw-bold mb-3">Short-term cyclone track prediction & situational forecast</h1>
-            <p class="lead text-muted mb-4">
-              Our experimental predictor uses historical IBTrACS tracks + an LSTM sequence model to forecast the next positions of cyclones in the North Indian Ocean.
-              This front-end visualizes model outputs and helps responders quickly evaluate short-term track uncertainty.
-            </p>
-
-            <div class="d-flex flex-wrap gap-3">
-              <a href="#cyclone-form" class="btn eq-cta"><i class="bi bi-compass me-2"></i>Start Forecast</a>
-              <a href="#how-it-works" class="btn eq-ghost"><i class="bi bi-info-circle me-2"></i>How it works</a>
-            </div>
+  <div class="container position-relative">
+    <div class="row align-items-center">
+      <!-- Copy / CTA -->
+      <div class="col-lg-7">
+        <div class="cyclone-hero-copy reveal">
+          <div class="d-flex align-items-center gap-2 mb-3">
+            <i class="bi bi-wind fs-3 text-info"></i>
+            <span class="cyclone-chip">Cyclone Forecasting (Experimental)</span>
           </div>
-        </div>
-
-        <div class="col-lg-5 mt-5 mt-lg-0">
-          <div class="cyclone-stats reveal">
-            <div class="cyclone-stat">
-              <div>
-                <div class="cyclone-stat-label">Model format</div>
-                <div class="cyclone-stat-value">LSTM • seq → lat/lon</div>
-              </div>
-              <i class="bi bi-robot fs-3"></i>
-            </div>
-            <div class="cyclone-stat">
-              <div>
-                <div class="cyclone-stat-label">Typical training time</div>
-                <div class="cyclone-stat-value">≈ few minutes (demo)</div>
-              </div>
-              <i class="bi bi-cpu fs-3"></i>
-            </div>
-            <div class="cyclone-stat">
-              <div>
-                <div class="cyclone-stat-label">Test MSE (UI demo)</div>
-                <div class="cyclone-stat-value">0.002 — 0.05</div>
-              </div>
-              <i class="bi bi-graph-up fs-3"></i>
-            </div>
+          <h1 class="cyclone-hero-title mb-3">
+            Track cyclone paths with<br>
+            <span class="brand-accent">Disaster</span>X forecasts
+          </h1>
+          <p class="cyclone-hero-sub mb-4">
+            Powered by historical IBTrACS data and sequence-based deep learning, our predictor offers short-term cyclone track estimates.<br/>
+            Built for meteorologists, responders, and vulnerable communities.
+          </p>
+          <div class="d-flex flex-wrap gap-3">
+            <a href="#cyclone-form" class="btn cyclone-cta"><i class="bi bi-compass me-2"></i>Start Forecast</a>
+            <a href="#how-it-works" class="btn cyclone-ghost"><i class="bi bi-info-circle me-2"></i>How it works</a>
           </div>
         </div>
       </div>
+
+      <!-- Stats -->
+      <div class="col-lg-5 mt-5 mt-lg-0">
+        <div class="cyclone-stats reveal">
+          <div class="cyclone-stat">
+            <i class="bi bi-robot"></i>
+            <div>
+              <div class="cyclone-stat-label">Model format</div>
+              <div class="cyclone-stat-value">LSTM → lat/lon</div>
+            </div>
+          </div>
+          <div class="cyclone-stat">
+            <i class="bi bi-cpu"></i>
+            <div>
+              <div class="cyclone-stat-label">Training (demo)</div>
+              <div class="cyclone-stat-value">Few minutes</div>
+            </div>
+          </div>
+          <div class="cyclone-stat">
+            <i class="bi bi-graph-up"></i>
+            <div>
+              <div class="cyclone-stat-label">Test MSE</div>
+              <div class="cyclone-stat-value">0.002 – 0.05</div>
+            </div>
+          </div>
+          <small class="text-muted">* Demo values for preview</small>
+        </div>
+      </div>
     </div>
-  </header>
+  </div>
+</section>
+
 
   <!-- HOW IT WORKS -->
   <section id="how-it-works" class="cyclone-section py-5">
