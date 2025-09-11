@@ -1710,12 +1710,12 @@ body {
 
 .resources-tab:hover {
   background: var(--secondary);
-  color: #fff;
+  color: #3d3939;
 }
 
 .resources-tab.active {
   background: var(--secondary);
-  color: #fff;
+  color: #3d3939;
   box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 

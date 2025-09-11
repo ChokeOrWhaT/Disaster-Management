@@ -305,3 +305,43 @@ function init() {
 
 // Call on load
 document.addEventListener('DOMContentLoaded', init);
+
+const popup = document.getElementById('popup');
+        const enterBtn = document.getElementById('enterBtn');
+        const closeBtn = document.getElementById('closeBtn');
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('overlay');
+        const toggleBtn = document.getElementById('toggleSidebar');
+
+        // Sidebar toggle
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', () => {
+                const isActive = sidebar.classList.toggle('active');
+                overlay.classList.toggle('active');
+                toggleBtn.setAttribute('aria-expanded', String(isActive));
+            });
+        }
+
+        if (overlay) {
+            overlay.addEventListener('click', () => {
+                sidebar.classList.remove('active');
+                overlay.classList.remove('active');
+                toggleBtn && toggleBtn.setAttribute('aria-expanded', 'false');
+            });
+        }
+
+        // Popup helpers
+        function hidePopup(perList = true) {
+            if (!popup) return;
+            popup.style.display = 'none';
+            popup.setAttribute('aria-hidden', 'true');
+            if (perList) sessionStorage.setItem('respondr_seen_popup', '1');
+        }
+
+        if (sessionStorage.getItem('respondr_seen_popup')) {
+            hidePopup(false);
+        }
+
+        enterBtn && enterBtn.addEventListener('click', () => hidePopup(true));
+        closeBtn && closeBtn.addEventListener('click', () => hidePopup(false));
+        document.addEventListener('keydown', (e) => { if (e.key === 'Escape') hidePopup(false); });
