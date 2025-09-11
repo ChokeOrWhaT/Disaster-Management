@@ -1,0 +1,647 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DisasterX — Admin Dashboard (Enhanced)</title>
+
+  <!-- Bootstrap & Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+  <!-- INLINE STYLES (all here) -->
+  <style>
+    :root{
+      --navy-900: #041029;    /* deep navy */
+      --navy-700: #08304f;
+      --accent: #ff7a18;      /* rich orange */
+      --soft: #f6f8fb;
+      --muted: #6b7280;
+      --card: #ffffff;
+      --glass: rgba(8,48,79,0.10);
+      --shadow: 0 10px 30px rgba(6,24,50,0.08);
+      --round: 12px;
+    }
+
+    /* Reset & base */
+    html,body{ height:100%; margin:0; font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; background: #fff; color:#0b1320; -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale; }
+    a { text-decoration:none; }
+
+    /* Topbar */
+    header.topbar{
+      position: sticky; top: 0; z-index: 2000;
+      background: linear-gradient(180deg, var(--navy-900), var(--navy-700));
+      color: #fff; padding:14px 22px; display:flex; align-items:center; gap:18px;
+      box-shadow: 0 6px 18px rgba(4,16,36,0.18);
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .topbar .brand { font-weight:800; font-size:1.1rem; letter-spacing:0.6px; color:#fff; display:flex; align-items:center; gap:8px; }
+    .brand .x { color:var(--accent); font-weight:900; font-size:1.25rem; }
+    .topbar .title { color:var(--accent); font-weight:800; font-size:0.95rem; margin-left:6px; }
+
+    .topbar .meta { color: rgba(255,255,255,0.85); font-size:0.88rem; margin-left:auto; display:flex; gap:12px; align-items:center; }
+    .topbar .meta .small { color: rgba(255,255,255,0.76); font-size:0.82rem; }
+
+    /* App layout */
+    .layout {
+      max-width:1400px; margin:20px auto; display:grid; grid-template-columns: 1fr 360px; gap:20px; padding: 0 18px;
+    }
+
+    /* Left nav (desktop) */
+    nav.side {
+      position:fixed; left:18px; top:86px; width:220px; bottom:24px;
+      background: linear-gradient(180deg, rgba(8,48,79,0.96), rgba(4,16,36,0.96));
+      padding:14px; border-radius:12px; color:#dbeafe; box-shadow: var(--shadow);
+    }
+    nav.side h5 { color:#fff; margin:0 0 8px 0; font-size:0.95rem; }
+    nav.side a { display:flex; gap:10px; align-items:center; padding:10px 8px; border-radius:8px; color:#cfe8ff; margin-bottom:6px; font-size:0.92rem; }
+    nav.side a:hover { background: rgba(255,255,255,0.03); transform: translateX(6px); color:#fff; }
+
+    /* Main content area */
+    main.content { padding-left: 260px; } /* space for side nav */
+    .grid { display:grid; grid-template-columns: repeat(12,1fr); gap:16px; }
+
+    /* stat card */
+    .kpi {
+      background: var(--card); border-radius:var(--round); padding:18px; box-shadow:var(--shadow);
+      display:flex; align-items:center; justify-content:space-between; gap:12px;
+    }
+    .kpi .left { display:flex; gap:12px; align-items:center; }
+    .kpi .icon { width:56px; height:56px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-size:1.4rem; color:#fff; }
+    .kpi .value { font-weight:800; color:var(--navy-900); font-size:1.4rem; }
+    .kpi .label { color:var(--muted); font-size:0.9rem; }
+
+    /* Big cards (charts, maps) */
+    .card { background:var(--card); border-radius:var(--round); padding:18px; box-shadow: var(--shadow); }
+    .card h4 { margin:0 0 10px 0; font-size:1rem; color:var(--navy-900); font-weight:800; }
+    .card .sub { color:var(--muted); font-size:0.88rem; margin-bottom:10px; }
+
+    /* table styling */
+    .table tbody tr:hover { background: #fbfbfb; }
+
+    /* Right panel (admin) */
+    aside.right {
+      position:sticky; top:86px; height: calc(100vh - 106px); padding:18px; border-radius:12px;
+      background: linear-gradient(180deg, rgba(8,48,79,0.92), rgba(4,16,36,0.85));
+      color:#fff; box-shadow:var(--shadow); overflow:auto;
+    }
+    aside.right h5 { margin:0 0 8px 0; color:var(--accent); font-weight:800; }
+    .right .section { padding:12px; background: rgba(255,255,255,0.03); border-radius:10px; margin-bottom:12px; }
+    .small-muted { color: rgba(255,255,255,0.8); font-size:0.86rem; }
+
+    /* predictor widget */
+    .predictor {
+      display:flex; gap:12px; align-items:center;
+    }
+    .predictor .meta { flex:1; }
+    .predictor .score { font-weight:900; font-size:1.2rem; color:var(--accent); }
+    .predictor .bar { height:10px; background: rgba(255,255,255,0.08); border-radius:8px; overflow:hidden; margin-top:6px; }
+    .predictor .bar > i { display:block; height:100%; background: linear-gradient(90deg,var(--accent), #ffb46b); width:40%; }
+
+    /* buttons */
+    .btn-accent { background:var(--accent); color:#fff; border:0; border-radius:10px; padding:8px 12px; font-weight:700; box-shadow: 0 8px 20px rgba(255,122,24,0.12); }
+    .btn-ghost { background:transparent; color:var(--accent); border:1px solid rgba(255,122,24,0.14); border-radius:10px; padding:6px 10px; }
+
+    /* helpful tiny cards */
+    .mini {
+      background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,255,255,0.98));
+      border-radius:10px; padding:12px; box-shadow: 0 6px 18px rgba(11,37,69,0.04);
+    }
+
+    /* Live feed */
+    .feed { max-height:180px; overflow:auto; padding-right:6px; }
+    .feed .item { margin-bottom:12px; }
+    .feed .item .title { color:var(--accent); font-weight:800; font-size:0.95rem; }
+    .feed .meta { color:var(--muted); font-size:0.82rem; }
+
+    /* responsive */
+    @media (max-width:1200px){
+      nav.side { display:none; }
+      main.content { padding-left: 18px; }
+      .layout { grid-template-columns: 1fr; }
+      aside.right { position:static; height:auto; }
+      .topbar { padding:12px; }
+    }
+    @media (max-width:700px){
+      .kpi .icon { width:48px; height:48px; }
+      .kpi .value { font-size:1.15rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="brand"><img src="https://via.placeholder.com/28/ffffff?text=DX" alt="" style="border-radius:6px;"> <span style="line-height:1">Disaster <span class="x">X</span></span></div>
+    <div class="title">ADMIN CONTROL CONSOLE</div>
+
+    <div class="meta">
+      <div style="text-align:right;">
+        <div style="color:var(--accent); font-weight:800;">Live · Monitoring</div>
+        <div class="small-muted" id="timeNow">--</div>
+      </div>
+      <button class="btn btn-sm btn-outline-light" title="Notifications"><i class="bi bi-bell-fill"></i></button>
+      <div style="width:38px; height:38px; border-radius:8px; overflow:hidden;"><img src="https://via.placeholder.com/38" alt=""></div>
+    </div>
+  </header>
+
+  <!-- SIDE NAV (desktop) -->
+  <nav class="side" aria-label="Primary">
+    <h5>Admin Navigation</h5>
+    <a href="#"><i class="bi bi-speedometer2"></i> Overview</a>
+    <a href="#"><i class="bi bi-flag-fill"></i> Incident Management</a>
+    <a href="#"><i class="bi bi-geo-alt-fill"></i> Shelter Manager</a>
+    <a href="#"><i class="bi bi-box-seam"></i> Resources</a>
+    <a href="#"><i class="bi bi-bar-chart-line"></i> Analytics</a>
+    <a href="#"><i class="bi bi-broadcast-pin"></i> RTA / Alerts</a>
+    <a href="#"><i class="bi bi-people-fill"></i> Volunteers</a>
+    <a href="#"><i class="bi bi-journal-text"></i> Audit Logs</a>
+    <a href="#"><i class="bi bi-gear-fill"></i> Settings</a>
+  </nav>
+
+  <!-- LAYOUT -->
+  <div class="layout">
+
+    <!-- MAIN CONTENT -->
+    <main class="content">
+      <div class="grid">
+
+        <!-- KPIs row -->
+        <div style="grid-column: span 3;">
+          <div class="kpi">
+            <div class="left">
+              <div class="icon" style="background: linear-gradient(180deg,#ff7a18,#ffb46b)"><i class="bi bi-fire"></i></div>
+              <div>
+                <div class="value" id="kpi-incidents">0</div>
+                <div class="label">Active incidents</div>
+              </div>
+            </div>
+            <div class="mini text-center" style="width:110px;">
+              <div style="font-size:0.95rem; font-weight:800; color:var(--navy-900);" id="kpi-inc-change">+0</div>
+              <div class="label" style="font-size:0.78rem;">24h change</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="grid-column: span 3;">
+          <div class="kpi">
+            <div class="left">
+              <div class="icon" style="background: linear-gradient(180deg,#2074ff,#6fb0ff)"><i class="bi bi-people-fill"></i></div>
+              <div>
+                <div class="value" id="kpi-people">0</div>
+                <div class="label">People assisted</div>
+              </div>
+            </div>
+            <div class="mini text-center" style="width:110px;">
+              <div style="font-size:0.95rem; font-weight:800; color:var(--navy-900);" id="kpi-people-change">+0</div>
+              <div class="label" style="font-size:0.78rem;">since yesterday</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="grid-column: span 3;">
+          <div class="kpi">
+            <div class="left">
+              <div class="icon" style="background: linear-gradient(180deg,#0ea5a4,#66e0d8)"><i class="bi bi-box-seam"></i></div>
+              <div>
+                <div class="value" id="kpi-res">0</div>
+                <div class="label">Available resources</div>
+              </div>
+            </div>
+            <div class="mini text-center" style="width:110px;">
+              <div style="font-size:0.95rem; font-weight:800; color:var(--navy-900);" id="kpi-res-change">-</div>
+              <div class="label" style="font-size:0.78rem;">utilization</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="grid-column: span 3;">
+          <div class="kpi">
+            <div class="left">
+              <div class="icon" style="background: linear-gradient(180deg,#ffd166,#ffe6a8)"><i class="bi bi-flag-fill"></i></div>
+              <div>
+                <div class="value" id="kpi-teams">0</div>
+                <div class="label">Rescue teams active</div>
+              </div>
+            </div>
+            <div class="mini text-center" style="width:110px;">
+              <div style="font-size:0.95rem; font-weight:800; color:var(--navy-900);" id="kpi-teams-change">—</div>
+              <div class="label" style="font-size:0.78rem;">availability</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Big charts / map -->
+        <div style="grid-column: span 8;">
+          <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+              <div>
+                <h4>Incidents: last 24 hours</h4>
+                <div class="sub">Hourly incidents (admin view)</div>
+              </div>
+              <div style="display:flex; gap:8px;">
+                <button class="btn btn-ghost" id="refreshBtn"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+                <button class="btn btn-accent" id="exportBtn"><i class="bi bi-download"></i> Export CSV</button>
+              </div>
+            </div>
+            <canvas id="chartIncidents" height="160"></canvas>
+          </div>
+
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:14px; margin-top:14px;">
+            <div class="card">
+              <h4>Incident types</h4>
+              <div class="sub">Distribution & severity</div>
+              <canvas id="chartTypes" height="120"></canvas>
+            </div>
+
+            <div class="card">
+              <h4>Resource utilization</h4>
+              <div class="sub">Allocations by category (week)</div>
+              <canvas id="chartResources" height="120"></canvas>
+            </div>
+          </div>
+
+          <div class="card" style="margin-top:14px;">
+            <h4>Recent incident reports</h4>
+            <div class="sub">Verify / assign / archive (admin)</div>
+            <div class="table-responsive" style="margin-top:10px;">
+              <table class="table align-middle mb-0">
+                <thead>
+                  <tr>
+                    <th>Time</th><th>Location</th><th>Type</th><th>Severity</th><th>Reports</th><th style="width:200px">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="incidentsTable"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right small widgets (left column) -->
+        <div style="grid-column: span 4;">
+          <!-- Predictors summary -->
+          <div class="card" style="margin-bottom:14px;">
+            <h4>Predictors (Admin)</h4>
+            <div class="sub">Model confidence & recommended action</div>
+
+            <div style="display:flex; flex-direction:column; gap:12px; margin-top:12px;">
+              <!-- Earthquake predictor -->
+              <div class="predictor">
+                <div style="width:54px; display:flex; align-items:center; justify-content:center;">
+                  <div style="width:46px; height:46px; border-radius:8px; background: linear-gradient(180deg,#ffb020,#ffd17a); color:#0b1320; display:flex; align-items:center; justify-content:center; font-weight:800;">EQ</div>
+                </div>
+                <div class="meta">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="font-weight:800;">Earthquake — <span style="color:var(--muted); font-weight:600;">Seismic</span></div>
+                    <div class="score" id="pred-eq">12%</div>
+                  </div>
+                  <div class="bar"><i id="predBarEq" style="width:12%"></i></div>
+                  <div class="small-muted" style="margin-top:6px;">Last update: <span id="predEqTime">--</span> · Confidence low</div>
+                </div>
+              </div>
+
+              <!-- Cyclone predictor -->
+              <div class="predictor">
+                <div style="width:54px; display:flex; align-items:center; justify-content:center;">
+                  <div style="width:46px; height:46px; border-radius:8px; background: linear-gradient(180deg,#2074ff,#6fb0ff); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800;">CY</div>
+                </div>
+                <div class="meta">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="font-weight:800;">Cyclone — <span style="color:var(--muted); font-weight:600;">Met</span></div>
+                    <div class="score" id="pred-cy">42%</div>
+                  </div>
+                  <div class="bar"><i id="predBarCy" style="width:42%"></i></div>
+                  <div class="small-muted" style="margin-top:6px;">Wind window: <strong id="predCyWind">N/A</strong> · ETA <span id="predCyEta">--</span></div>
+                </div>
+              </div>
+
+              <!-- Flood predictor -->
+              <div class="predictor">
+                <div style="width:54px; display:flex; align-items:center; justify-content:center;">
+                  <div style="width:46px; height:46px; border-radius:8px; background: linear-gradient(180deg,#2074ff,#6fb0ff); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:800;">FL</div>
+                </div>
+                <div class="meta">
+                  <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <div style="font-weight:800;">Flood — <span style="color:var(--muted); font-weight:600;">Hydrology</span></div>
+                    <div class="score" id="pred-fl">68%</div>
+                  </div>
+                  <div class="bar"><i id="predBarFl" style="width:68%"></i></div>
+                  <div class="small-muted" style="margin-top:6px;">River stage: <strong id="predFlStage">High</strong> · Retro-ETA <span id="predFlEta">2h</span></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Quick alerts & top tasks -->
+          <div class="card" style="margin-bottom:14px;">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+              <h4 style="margin:0">Quick Alerts</h4>
+              <div class="small-muted">Admin tools</div>
+            </div>
+            <div class="sub" style="margin-top:6px;">Broadcast high-priority messages or open shelter</div>
+
+            <div style="display:flex; gap:8px; margin-top:12px;">
+              <select id="alertType" class="form-select form-select-sm" style="flex:1;">
+                <option value="evacuate">Evacuate area</option>
+                <option value="shelter">Open shelter</option>
+                <option value="medical">Request medical aid</option>
+                <option value="all-clear">All Clear</option>
+              </select>
+              <button id="sendAlert" class="btn btn-accent">Send</button>
+            </div>
+
+            <hr style="border-color: rgba(255,255,255,0.04); margin:12px 0;">
+
+            <h6 style="margin:0 0 8px 0; color:#fff">Top priority tasks</h6>
+            <ul style="padding-left:14px; margin-top:8px; color:#fff">
+              <li style="margin-bottom:8px;">Dispatch Medical Team — Vasai (<span style="color:#ffd166">P1</span>)</li>
+              <li style="margin-bottom:8px;">Open Temporary Shelter A1 (Remaining 48)</li>
+              <li style="margin-bottom:8px;">Arrange Evac Transport — Palghar</li>
+            </ul>
+          </div>
+
+          <!-- shelters -->
+          <div class="card" style="margin-bottom:14px;">
+            <h4>Shelters & Capacity</h4>
+            <div class="sub">Live availability (admin)</div>
+            <div style="margin-top:10px; display:flex; flex-direction:column; gap:10px;">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div style="font-weight:800">Shelter A1 — Vasai</div>
+                  <div class="small-muted">Capacity 220 · Medical tent active</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-size:1.05rem; font-weight:900; color:var(--accent);" id="shelterA1">48</div>
+                  <div class="small-muted">available</div>
+                </div>
+              </div>
+
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div>
+                  <div style="font-weight:800">Shelter B3 — Palghar</div>
+                  <div class="small-muted">Capacity 150 · Water / Food</div>
+                </div>
+                <div style="text-align:right">
+                  <div style="font-size:1.05rem; font-weight:900; color:#66e0d8;" id="shelterB3">4</div>
+                  <div class="small-muted">available</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- live feed -->
+          <div class="card">
+            <h4>Live Feed</h4>
+            <div class="sub">Field team updates</div>
+            <div class="feed" id="liveFeed" style="margin-top:10px;">
+              <!-- JS items -->
+            </div>
+            <button class="btn btn-ghost" style="margin-top:8px;" id="viewMore">View more</button>
+          </div>
+
+        </div>
+
+      </div>
+    </main>
+
+    <!-- RIGHT PANEL (sticky) -->
+    <aside class="right" aria-label="Admin panel">
+      <h5>Commander View</h5>
+      <div class="small-muted">Fast access to admin-only features</div>
+
+      <div class="section" style="margin-top:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div style="font-size:1.05rem; font-weight:900;" id="alertsSent">0</div>
+            <div class="small-muted">Alerts sent (24h)</div>
+          </div>
+          <div style="text-align:right">
+            <button class="btn btn-accent btn-sm" id="quickReport"><i class="bi bi-plus-lg"></i> New Incident</button>
+            <div style="height:6px"></div>
+            <button class="btn btn-ghost btn-sm" id="exportLogs">Export</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div style="display:flex; gap:12px; align-items:center;">
+          <div style="flex:1;">
+            <div class="small-muted">Volunteers</div>
+            <div style="font-weight:900; font-size:1.15rem;" id="volActive">0</div>
+          </div>
+          <div style="flex:1;">
+            <div class="small-muted">Avg Response Time</div>
+            <div style="font-weight:900; font-size:1.15rem;" id="avgResp">--</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div style="display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <div class="small-muted">System Health</div>
+            <div style="font-weight:900; font-size:1.05rem; color:#9ef1d7;">All systems nominal</div>
+          </div>
+          <div>
+            <div class="small-muted">Uptime</div>
+            <div style="font-weight:900;">99.98%</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div style="font-weight:800; margin-bottom:8px;">Logs (last 24h)</div>
+        <div class="small-muted" id="sysLogs">
+          [11:12] Flood warning escalated — Vasai<br>
+          [10:50] Shelter A1 opened (admin)<br>
+          [09:30] Medical team dispatched — Palghar
+        </div>
+      </div>
+
+      <div class="section" style="display:flex; gap:8px; justify-content:space-between;">
+        <button class="btn btn-accent" id="assignAuto">Auto-assign resources</button>
+        <button class="btn btn-ghost" id="callTeams">Call teams</button>
+      </div>
+
+    </aside>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    /* ---------- Utilities ---------- */
+    const fmt = n => n.toLocaleString();
+    function now() { return new Date().toLocaleString(); }
+    document.getElementById('timeNow').textContent = now();
+    setInterval(()=> document.getElementById('timeNow').textContent = now(), 1000);
+
+    /* ---------- Fake initial data ---------- */
+    let stats = {
+      incidents: 24,
+      people: 5234,
+      resources: 412,
+      teams: 34,
+      alertsSent: 12,
+      volunteers: 124,
+      avgResp: '00:22'
+    };
+
+    // populate KPI values
+    document.getElementById('kpi-incidents').textContent = fmt(stats.incidents);
+    document.getElementById('kpi-people').textContent = fmt(stats.people);
+    document.getElementById('kpi-res').textContent = fmt(stats.resources);
+    document.getElementById('kpi-teams').textContent = fmt(stats.teams);
+    document.getElementById('alertsSent').textContent = fmt(stats.alertsSent);
+    document.getElementById('volActive').textContent = fmt(stats.volunteers);
+    document.getElementById('avgResp').textContent = stats.avgResp;
+    document.getElementById('kpi-inc-change').textContent = '+6';
+    document.getElementById('kpi-people-change').textContent = '+120';
+
+    /* ---------- Charts ---------- */
+    const hours = Array.from({length:24}).map((_,i)=> (i+1) + 'h');
+    const incidentsData = hours.map(()=> Math.floor(4 + Math.random()*28));
+    const ctxInc = document.getElementById('chartIncidents').getContext('2d');
+    const chartInc = new Chart(ctxInc, {
+      type: 'line',
+      data: { labels: hours, datasets: [{ label:'Active incidents', data: incidentsData, borderColor: 'rgba(255,122,24,0.95)', backgroundColor: 'rgba(255,122,24,0.12)', tension:0.35, pointRadius:2, fill:true }] },
+      options: { responsive:true, plugins: { legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
+    });
+
+    const ctxTypes = document.getElementById('chartTypes').getContext('2d');
+    const chartTypes = new Chart(ctxTypes, {
+      type:'doughnut',
+      data: { labels:['Flood','Fire','Earthquake','Cyclone','Other'], datasets:[{ data:[34,20,18,14,14], backgroundColor:['#2074ff','#ff6b3d','#ffb020','#7b61ff','#94a3b8'] }] },
+      options:{ responsive:true, plugins:{ legend:{ position:'bottom' } } }
+    });
+
+    const ctxRes = document.getElementById('chartResources').getContext('2d');
+    const chartRes = new Chart(ctxRes, {
+      type:'bar',
+      data: { labels:['Medical','Food','Water','Transport','Shelter Kits'], datasets:[{ label:'Allocated', data:[120,340,280,90,160], backgroundColor:'#08304f' }] },
+      options:{ responsive:true, plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
+    });
+
+    /* ---------- Incidents table population ---------- */
+    const sampleIncidents = [
+      { time:'2025-09-05 11:12', loc:'Vasai West', type:'Flood', sev:'High', reports:42 },
+      { time:'2025-09-05 10:55', loc:'Palghar East', type:'Earthquake', sev:'Medium', reports:18 },
+      { time:'2025-09-05 09:33', loc:'Vasai South', type:'Fire', sev:'Critical', reports:27 },
+      { time:'2025-09-04 22:14', loc:'Mira Road', type:'Flood', sev:'Low', reports:5 }
+    ];
+    const tbody = document.getElementById('incidentsTable');
+    function addRow(it){
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td style="white-space:nowrap">${it.time}</td>
+        <td>${it.loc}</td>
+        <td><span style="padding:6px 8px; border-radius:8px; color:#fff; font-weight:700; background:${it.type==='Fire'?'#ff6b3d':it.type==='Flood'?'#2074ff':it.type==='Earthquake'?'#ffb020':'#64748b'}">${it.type}</span></td>
+        <td>${it.sev}</td>
+        <td>${it.reports}</td>
+        <td>
+          <div style="display:flex; gap:8px;">
+            <button class="btn btn-sm btn-accent btn-verify">Verify</button>
+            <button class="btn btn-sm btn-ghost btn-assign">Assign</button>
+            <button class="btn btn-sm btn-outline-danger btn-archive">Archive</button>
+          </div>
+        </td>`;
+      tbody.appendChild(tr);
+
+      tr.querySelector('.btn-verify').addEventListener('click', ()=> { pushLog(`Verified incident — ${it.loc}`); tr.style.opacity='0.6'; });
+      tr.querySelector('.btn-assign').addEventListener('click', ()=> { pushLog(`Assigned resources — ${it.loc}`); });
+      tr.querySelector('.btn-archive').addEventListener('click', ()=> { pushLog(`Archived incident — ${it.loc}`); tr.remove(); });
+    }
+    sampleIncidents.forEach(addRow);
+
+    /* ---------- Live feed & audit ---------- */
+    const liveFeed = document.getElementById('liveFeed');
+    function pushFeed(title, text){
+      const el = document.createElement('div'); el.className='item';
+      el.innerHTML = `<div class="title">${title}</div><div class="meta">${new Date().toLocaleTimeString()} · ${text}</div>`;
+      liveFeed.prepend(el);
+      if(liveFeed.children.length>30) liveFeed.removeChild(liveFeed.lastChild);
+    }
+    function pushLog(msg){
+      const logs = document.getElementById('sysLogs');
+      logs.innerHTML = `[${new Date().toLocaleTimeString()}] ${msg}<br>` + logs.innerHTML;
+      document.getElementById('alertsSent').textContent = ++stats.alertsSent;
+    }
+
+    pushFeed('Flood warning escalated — Vasai','River stage rising near bank');
+    pushFeed('Shelter opened: A1','Capacity 220; Medical tent active');
+
+    /* ---------- Predictors (simulated values) ---------- */
+    function setPredictor(idVal, idBar, percent, timeElem, extra){
+      document.getElementById(idVal).textContent = percent + '%';
+      document.getElementById(idBar).style.width = percent + '%';
+      if(timeElem) document.getElementById(timeElem).textContent = new Date().toLocaleTimeString();
+      if(extra) {
+        // optional extras
+        if(idVal==='pred-fl') document.getElementById('predFlStage').textContent = extra.stage || 'High';
+        if(idVal==='pred-cy') document.getElementById('predCyWind').textContent = extra.wind || '40 km/h';
+        if(idVal==='pred-cy') document.getElementById('predCyEta').textContent = extra.eta || '4h';
+      }
+    }
+    setPredictor('pred-eq','predBarEq',12,'predEqTime', {});
+    setPredictor('pred-cy','predBarCy',42,null, {wind:'50 km/h', eta:'6h'});
+    setPredictor('pred-fl','predBarFl',68,null, {stage:'High', eta:'2h'});
+
+    /* ---------- Quick alert action ---------- */
+    document.getElementById('sendAlert').addEventListener('click', ()=>{
+      const t = document.getElementById('alertType').value;
+      pushFeed('ADMIN ALERT: ' + t.toUpperCase(), 'Manual alert sent by admin');
+      pushLog('Sent alert: ' + t);
+      flashButton('#sendAlert');
+    });
+
+    function flashButton(sel){
+      const b = document.querySelector(sel);
+      b.style.transform='translateY(-2px)';
+      setTimeout(()=> b.style.transform='none', 160);
+    }
+
+    /* ---------- Quick create incident ---------- */
+    document.getElementById('quickReport').addEventListener('click', ()=>{
+      const now = new Date().toISOString().slice(0,16).replace('T',' ');
+      const types = ['Flood','Fire','Earthquake','Cyclone'];
+      const it = { time: now, loc: 'Auto Zone ' + Math.floor(Math.random()*99), type: types[Math.floor(Math.random()*types.length)], sev:['Low','Medium','High'][Math.floor(Math.random()*3)], reports: Math.floor(Math.random()*30)+1 };
+      addRow(it); pushFeed('Admin created incident', it.loc); pushLog('Admin created incident: ' + it.loc);
+    });
+
+    /* ---------- Small realtime simulator ---------- */
+    setInterval(()=> {
+      // random changes
+      stats.incidents = Math.max(0, stats.incidents + Math.floor((Math.random()-0.4)*2));
+      stats.people += Math.floor(Math.random()*8);
+      stats.resources = Math.max(0, stats.resources + Math.floor((Math.random()-0.6)*6));
+      stats.teams = Math.max(0, stats.teams + Math.floor((Math.random()-0.5)*1));
+      document.getElementById('kpi-incidents').textContent = fmt(stats.incidents);
+      document.getElementById('kpi-people').textContent = fmt(stats.people);
+      document.getElementById('kpi-res').textContent = fmt(stats.resources);
+      document.getElementById('kpi-teams').textContent = fmt(stats.teams);
+      document.getElementById('volActive').textContent = fmt(stats.volunteers);
+
+      // charts update (append & shift)
+      const newVal = Math.floor(3 + Math.random()*30);
+      chartInc.data.datasets[0].data.push(newVal);
+      chartInc.data.labels.push( (chartInc.data.labels.length+1) + 'h' );
+      if(chartInc.data.datasets[0].data.length > 48){ chartInc.data.datasets[0].data.shift(); chartInc.data.labels.shift(); }
+      chartInc.update();
+
+      // occasionally push feed
+      if(Math.random() > 0.78) pushFeed('Field update — ' + ['Bridge damage','Road blocked','Minor fire'][Math.floor(Math.random()*3)], 'Team en route');
+
+    }, 7000);
+
+    /* ---------- Export & interactions ---------- */
+    document.getElementById('exportBtn').addEventListener('click', ()=> { pushLog('Exported incidents CSV'); alert('Exported (simulated)'); });
+    document.getElementById('refreshBtn').addEventListener('click', ()=> { chartInc.update(); pushLog('Refreshed incidents chart'); });
+
+    // populate initial logs UI
+    document.getElementById('sysLogs').innerHTML = '[11:12] Flood warning escalated — Vasai<br>[10:50] Shelter A1 opened (admin)<br>[09:30] Medical team dispatched — Palghar';
+
+  </script>
+</body>
+</html>
